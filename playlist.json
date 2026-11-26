@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "title": "Acoustic Breeze",
+    "artist": "Sunrise Melody",
+    "resName": "song_01",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_01.mp3"
+  },
+  {
+    "id": 2,
+    "title": "Sunny Days",
+    "artist": "Morning Walk",
+    "resName": "song_02",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_02.mp3"
+  },
+  {
+    "id": 3,
+    "title": "Chill Lofi Beat",
+    "artist": "Coffee Time",
+    "resName": "song_03",
+    "duration": "0:06",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_03.mp3"
+  },
+  {
+    "id": 4,
+    "title": "City Lights",
+    "artist": "Night Drive",
+    "resName": "song_04",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_04.mp3"
+  },
+  {
+    "id": 5,
+    "title": "Dreamy Sky",
+    "artist": "Cloud Watching",
+    "resName": "song_05",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_05.mp3"
+  },
+  {
+    "id": 6,
+    "title": "Ocean Waves",
+    "artist": "Relaxing Vibe",
+    "resName": "song_06",
+    "duration": "0:06",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_06.mp3"
+  },
+  {
+    "id": 7,
+    "title": "Forest Rain",
+    "artist": "Peaceful Moments",
+    "resName": "song_07",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_07.mp3"
+  },
+  {
+    "id": 8,
+    "title": "Midnight Jazz",
+    "artist": "Cozy Lounge",
+    "resName": "song_08",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_08.mp3"
+  },
+  {
+    "id": 9,
+    "title": "Golden Hour",
+    "artist": "Sunset Horizon",
+    "resName": "song_09",
+    "duration": "0:05",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_09.mp3"
+  },
+  {
+    "id": 10,
+    "title": "Sweet Memories",
+    "artist": "Nostalgia Sound",
+    "resName": "song_10",
+    "duration": "0:06",
+    "onlineUrl": "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_10.mp3"
+  }
+]

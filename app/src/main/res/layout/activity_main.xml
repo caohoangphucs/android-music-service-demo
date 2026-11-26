@@ -2,45 +2,95 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="16dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Music Service Demo"
-        android:textSize="24sp"
+        android:text="Music Service Demo (10 Songs)"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="8dp" />
+        android:textColor="#222222" />
 
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Trạng thái: Đang dừng"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="#666666"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp" />
 
-    <Button
-        android:id="@+id/btnForeground"
+    <!-- Control Buttons -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="▶ Bật Foreground Service" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
 
-    <Button
-        android:id="@+id/btnBackground"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
-        android:text="▶ Bật Background Service" />
+        <Button
+            android:id="@+id/btnForeground"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Foreground"
+            android:textSize="12sp" />
 
-    <Button
-        android:id="@+id/btnStop"
+        <Button
+            android:id="@+id/btnBackground"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="Background"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Stop"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
-        android:text="⏹ Dừng Service" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/btnPrev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⏮ Prev" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Next ⏭" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Danh sách 10 bài hát (nhấn để chọn bài):"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp" />
+
+    <ListView
+        android:id="@+id/lvSongs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>
