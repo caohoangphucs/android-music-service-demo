@@ -1,31 +1,27 @@
-# Android Music Service Demo (Java)
+# Android Music Player - Bound & Foreground Service Demo (Java)
 
-Dự án mẫu minh họa **Service trong Android** (Foreground Service & Background Service) phát nhạc nền bằng Java.
-
----
-
-## 🌟 Chức năng chính
-1. **Background Service**:
-   - Khởi chạy Service phát nhạc thông thường (`startService()`).
-   - Nhạc phát trong background nhưng không hiển thị Notification cố định (có nguy cơ bị hệ điều hành giải phóng khi thiếu RAM).
-2. **Foreground Service**:
-   - Khởi chạy Service mức ưu tiên cao (`startForegroundService()` + `startForeground()`).
-   - Hiển thị Notification liên tục trên thanh thông báo, đảm bảo tiến trình phát nhạc không bị hệ thống tự động tắt khi ẩn app hoặc tắt màn hình.
-   - Hỗ trợ đầy đủ quyền Media Playback và Notification trên Android 13/14 (`POST_NOTIFICATIONS`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`).
-3. **Stop Service**:
-   - Dừng phát nhạc và hủy giải phóng tài nguyên MediaPlayer.
+Dự án mẫu minh họa đầy đủ kỹ thuật **Foreground Service kết hợp Bound Service (bindService)** trong Android bằng ngôn ngữ Java.
 
 ---
 
-## 🛠 Cấu trúc Source Code
-- `app/src/main/AndroidManifest.xml`: Khai báo quyền, Foreground Service type `mediaPlayback`.
-- `MusicService.java`: Điều khiển vòng đời Service, quản lý `MediaPlayer` và cấu hình `NotificationChannel`.
-- `MainActivity.java`: Giao diện điều khiển (Start Background / Start Foreground / Stop) và cơ chế xin quyền động runtime permission.
-- `res/raw/demo_music.mp3`: File âm thanh demo đi kèm sẵn trong project.
+## 🌟 Đúng chuẩn yêu cầu đề bài
+1. **Dùng Bound Service (`bindService` & `IBinder`)**:
+   - `MainActivity` liên kết trực tiếp với `MusicService` qua `ServiceConnection`.
+   - Điều khiển tương tác thời gian thực: **Play**, **Pause**, **Next**, **Prev**, và chọn bài từ ListView 10 bài hát.
+   - Khi vào lại ứng dụng, Activity tự bind lại và cập nhật chính xác bài đang phát và trạng thái Play/Pause.
+2. **Foreground Service (`startForegroundService` + Notification)**:
+   - Khi thoát app hoặc bấm Home ra màn hình chính, Service **vẫn tiếp tục phát nhạc bình thường**.
+   - Thanh thông báo hiển thị đầy đủ Notification với tên bài hát, nghệ sĩ và các nút điều khiển trực tiếp (**Play/Pause**, **Next**, **Prev**).
+3. **Quản lý vòng đời chuẩn Android**:
+   - Khởi chạy bằng `startForegroundService()` để đảm bảo tiến trình sống độc lập.
+   - Gắn kết bằng `bindService()` trong `onStart()` và `unbindService()` trong `onStop()` để tránh rò rỉ bộ nhớ (leak connection).
 
 ---
 
-## 🚀 Hướng dẫn mở và chạy trên Android Studio
-1. Mở **Android Studio** -> Chọn **Open** -> Trỏ đến thư mục `android-music-service-demo`.
-2. Đợi Gradle sync hoàn tất.
-3. Nhấn **Run (Shift + F10)** trên máy ảo hoặc thiết bị Android thật (hỗ trợ Android 7.0 - Android 14+).
+## 🚀 Hướng dẫn chạy
+1. Clone hoặc tải project về máy:
+   ```bash
+   git clone https://github.com/caohoangphucs/android-music-service-demo.git
+   ```
+2. Mở bằng **Android Studio**.
+3. Bấm **Run** để chạy trên máy ảo hoặc thiết bị thật (Android 7.0 - 14+).

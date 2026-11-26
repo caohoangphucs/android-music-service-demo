@@ -3,31 +3,35 @@ package com.example.musicservicedemo;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import java.io.IOException;
 
 public class MusicService extends Service {
-    public static final String ACTION_START_BACKGROUND = "ACTION_START_BG";
-    public static final String ACTION_START_FOREGROUND = "ACTION_START_FG";
-    public static final String ACTION_STOP = "ACTION_STOP";
+    public static final String ACTION_START_FOREGROUND = "ACTION_START_FOREGROUND";
+    public static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
     public static final String ACTION_NEXT = "ACTION_NEXT";
     public static final String ACTION_PREV = "ACTION_PREV";
-    public static final String ACTION_PLAY_INDEX = "ACTION_PLAY_INDEX";
-
-    public static final String EXTRA_INDEX = "EXTRA_INDEX";
-    public static final String EXTRA_MODE = "EXTRA_MODE"; // "fg" or "bg"
+    public static final String ACTION_STOP = "ACTION_STOP";
 
     private static final String CHANNEL_ID = "MusicDemoChannel";
+    private static final int NOTIFICATION_ID = 1;
 
     private MediaPlayer mediaPlayer;
     private int currentIndex = 0;
-    private boolean isForegroundMode = true;
+    private final IBinder binder = new MusicBinder();
+
+    public interface OnPlaybackChangeListener {
+        void onPlaybackChanged(Song song, boolean isPlaying, int index);
+    }
+    private OnPlaybackChangeListener playbackChangeListener;
 
     private static final Song[] PLAYLIST = new Song[]{
         new Song("Acoustic Breeze", "Sunrise Melody", R.raw.song_01, "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_01.mp3"),
@@ -42,47 +46,51 @@ public class MusicService extends Service {
         new Song("Sweet Memories", "Nostalgia Sound", R.raw.song_10, "https://raw.githubusercontent.com/caohoangphucs/android-music-service-demo/main/app/src/main/res/raw/song_10.mp3")
     };
 
+    public class MusicBinder extends Binder {
+        public MusicService getService() {
+            return MusicService.this;
+        }
+    }
+
     public static Song[] getPlaylist() {
         return PLAYLIST;
+    }
+
+    public void setOnPlaybackChangeListener(OnPlaybackChangeListener listener) {
+        this.playbackChangeListener = listener;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
-
-            if (ACTION_START_BACKGROUND.equals(action)) {
-                isForegroundMode = false;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    stopForeground(STOP_FOREGROUND_REMOVE);
+            if (ACTION_START_FOREGROUND.equals(action)) {
+                if (mediaPlayer == null) {
+                    playSong(currentIndex);
                 } else {
-                    stopForeground(true);
+                    updateNotification();
                 }
-                playSong(currentIndex);
-            } else if (ACTION_START_FOREGROUND.equals(action)) {
-                isForegroundMode = true;
-                playSong(currentIndex);
-            } else if (ACTION_PLAY_INDEX.equals(action)) {
-                currentIndex = intent.getIntExtra(EXTRA_INDEX, 0);
-                if (intent.hasExtra(EXTRA_MODE)) {
-                    isForegroundMode = "fg".equals(intent.getStringExtra(EXTRA_MODE));
-                }
-                playSong(currentIndex);
+            } else if (ACTION_PLAY_PAUSE.equals(action)) {
+                togglePlayPause();
             } else if (ACTION_NEXT.equals(action)) {
-                currentIndex = (currentIndex + 1) % PLAYLIST.length;
-                playSong(currentIndex);
+                nextSong();
             } else if (ACTION_PREV.equals(action)) {
-                currentIndex = (currentIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
-                playSong(currentIndex);
+                prevSong();
             } else if (ACTION_STOP.equals(action)) {
                 stopMusic();
+                stopForeground(true);
                 stopSelf();
             }
         }
         return START_NOT_STICKY;
     }
 
-    private void playSong(int index) {
+    public void playSong(int index) {
         if (index < 0 || index >= PLAYLIST.length) index = 0;
         currentIndex = index;
         Song song = PLAYLIST[index];
@@ -92,7 +100,6 @@ public class MusicService extends Service {
             mediaPlayer = null;
         }
 
-        // Ưu tiên phát từ local raw, fallback sang online URL nếu cần
         mediaPlayer = MediaPlayer.create(this, song.getRawResId());
         if (mediaPlayer == null) {
             try {
@@ -109,32 +116,38 @@ public class MusicService extends Service {
             }
         }
 
-        mediaPlayer.setOnCompletionListener(mp -> {
-            currentIndex = (currentIndex + 1) % PLAYLIST.length;
-            playSong(currentIndex);
-        });
-
+        mediaPlayer.setOnCompletionListener(mp -> nextSong());
         mediaPlayer.start();
 
-        if (isForegroundMode) {
-            updateForegroundNotification(song);
+        updateNotification();
+        notifyStateChanged();
+    }
+
+    public void togglePlayPause() {
+        if (mediaPlayer == null) {
+            playSong(currentIndex);
+            return;
         }
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        } else {
+            mediaPlayer.start();
+        }
+        updateNotification();
+        notifyStateChanged();
     }
 
-    private void updateForegroundNotification(Song song) {
-        createNotificationChannel();
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Playing: " + song.getTitle())
-                .setContentText(song.getArtist() + " (" + (currentIndex + 1) + "/" + PLAYLIST.length + ")")
-                .setSmallIcon(android.R.drawable.ic_media_play)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setOngoing(true)
-                .build();
-
-        startForeground(1, notification);
+    public void nextSong() {
+        currentIndex = (currentIndex + 1) % PLAYLIST.length;
+        playSong(currentIndex);
     }
 
-    private void stopMusic() {
+    public void prevSong() {
+        currentIndex = (currentIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
+        playSong(currentIndex);
+    }
+
+    public void stopMusic() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
@@ -142,13 +155,67 @@ public class MusicService extends Service {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        notifyStateChanged();
+    }
+
+    public boolean isPlaying() {
+        return mediaPlayer != null && mediaPlayer.isPlaying();
+    }
+
+    public Song getCurrentSong() {
+        return PLAYLIST[currentIndex];
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    private void notifyStateChanged() {
+        if (playbackChangeListener != null) {
+            playbackChangeListener.onPlaybackChanged(getCurrentSong(), isPlaying(), currentIndex);
+        }
+    }
+
+    private void updateNotification() {
+        createNotificationChannel();
+        Song song = getCurrentSong();
+        boolean playing = isPlaying();
+
+        Intent openAppIntent = new Intent(this, MainActivity.class);
+        PendingIntent pOpenApp = PendingIntent.getActivity(this, 0, openAppIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        // Actions in Notification
+        Intent prevIntent = new Intent(this, MusicService.class).setAction(ACTION_PREV);
+        PendingIntent pPrev = PendingIntent.getService(this, 1, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        Intent playPauseIntent = new Intent(this, MusicService.class).setAction(ACTION_PLAY_PAUSE);
+        PendingIntent pPlayPause = PendingIntent.getService(this, 2, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        Intent nextIntent = new Intent(this, MusicService.class).setAction(ACTION_NEXT);
+        PendingIntent pNext = PendingIntent.getService(this, 3, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(song.getTitle())
+                .setContentText(song.getArtist() + (playing ? " (Đang phát)" : " (Tạm dừng)"))
+                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setContentIntent(pOpenApp)
+                .addAction(android.R.drawable.ic_media_previous, "Prev", pPrev)
+                .addAction(playing ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play,
+                        playing ? "Pause" : "Play", pPlayPause)
+                .addAction(android.R.drawable.ic_media_next, "Next", pNext)
+                .setOngoing(playing)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Music Service Notification",
+                    "Music Playback Service",
                     NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
@@ -162,10 +229,5 @@ public class MusicService extends Service {
     public void onDestroy() {
         stopMusic();
         super.onDestroy();
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

@@ -3,94 +3,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp"
+    android:background="#F8F9FA">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Music Service Demo (10 Songs)"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#222222" />
-
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Trạng thái: Đang dừng"
-        android:textSize="14sp"
-        android:textColor="#666666"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp" />
-
-    <!-- Control Buttons -->
+    <!-- Header / Now Playing Card -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:layout_marginBottom="16dp">
 
-        <Button
-            android:id="@+id/btnForeground"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Foreground"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btnBackground"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:text="Background"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btnStop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Stop"
-            android:textSize="12sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
-
-        <Button
-            android:id="@+id/btnPrev"
+        <TextView
+            android:id="@+id/tvSongTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⏮ Prev" />
+            android:text="Chưa chọn bài hát"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#212529" />
 
-        <Button
-            android:id="@+id/btnNext"
+        <TextView
+            android:id="@+id/tvArtist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Next ⏭" />
+            android:text="Nghệ sĩ: -"
+            android:textSize="14sp"
+            android:textColor="#6C757D"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trạng thái: Đã dừng"
+            android:textSize="13sp"
+            android:textColor="#0D6EFD"
+            android:layout_marginTop="6dp" />
+
+        <!-- Control Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/btnPrev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏮ Prev" />
+
+            <Button
+                android:id="@+id/btnPlayPause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:text="▶ Play" />
+
+            <Button
+                android:id="@+id/btnNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next ⏭" />
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Danh sách 10 bài hát (nhấn để chọn bài):"
-        android:textSize="14sp"
+        android:text="Danh sách bài hát (Chọn để phát):"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp" />
+        android:textColor="#333333"
+        android:layout_marginBottom="8dp" />
 
     <ListView
         android:id="@+id/lvSongs"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:divider="#E9ECEF"
+        android:dividerHeight="1dp" />
 </LinearLayout>
